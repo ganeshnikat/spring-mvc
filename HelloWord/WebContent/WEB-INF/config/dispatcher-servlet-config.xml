@@ -1,0 +1,47 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+	<!-- START:To Enabled Spring Annotation -->
+	<mvc:annotation-driven />
+	<!-- END:To Enabled Spring Annotation -->
+	<!-- START:To Enabled DefaultServlet -->
+	<mvc:default-servlet-handler />
+	<!-- END:To Enabled DefaultServlet -->
+	<context:component-scan base-package="com.hello" />
+	<!-- START:To Add .properties files in classpath -->
+	<context:property-placeholder location="classpath*:/props/*.properties" />
+	<!-- END:To Add .properties files in classpath -->
+	<!-- START:To configure viewResolver -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	<!-- END:To configure viewResolver -->
+	<!-- START:To configure Database connectivity with oracle -->
+	<bean id="realDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${database.driverClassName}" />
+		<property name="url" value="${database.url}" />
+		<property name="username" value="${database.username}" />
+		<property name="password" value="${database.password}" />
+		<property name="defaultAutoCommit" value="false" />
+		<property name="maxActive" value="${cp.maxActive}" />
+		<property name="maxIdle" value="${cp.maxIdle}" />
+		<property name="minIdle" value="${cp.minIdle}" />
+		<property name="maxWait" value="${cp.maxWait}" />
+	</bean>
+	<bean id="dataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+		<constructor-arg index="0" ref="realDataSource" />
+	</bean>
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg ref="realDataSource"></constructor-arg>
+	</bean>
+	<!-- END:To configure Database connectivity with oracle -->
+</beans>
